@@ -1,6 +1,9 @@
 
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Business.Abstract;
 using Business.Concrete;
+using Business.DependencyResolvers.Autofac;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 
@@ -14,12 +17,20 @@ namespace WebAPI
 
             // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryInject --> IoC Container yokken altyapý sunuyordu
             // Autofac bize AOP imkaný sunuyor. Biz .Net'in IoC Container'ýna Autofac'i injecte edicez.
+            // Postsharp
             builder.Services.AddControllers();
 
+            //Autofac
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureContainer<ContainerBuilder>(builderr=>
+                {
+                    builderr.RegisterModule(new AutofacBusinessModule());   
+                });
+
             //IoC Container
-            builder.Services.AddSingleton<IProductDal, EfProductDal>();
-            builder.Services.AddSingleton<IProductService, ProductManager>();
-            
+            //builder.Services.AddSingleton<IProductDal, EfProductDal>();
+            //builder.Services.AddSingleton<IProductService, ProductManager>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -36,11 +47,13 @@ namespace WebAPI
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            
 
             app.MapControllers();
 
             app.Run();
         }
+
+
     }
 }
