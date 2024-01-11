@@ -1,4 +1,6 @@
-﻿using Core.Utilities.IoC;
+﻿using Core.CrossCuttingConcerns.Caching;
+using Core.CrossCuttingConcerns.Caching.Microsoft;
+using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -14,10 +16,10 @@ namespace Core.DependencyResolvers
     {
         public void Load(IServiceCollection services)
         {
-            //services.AddMemoryCache();
-           // services.AddSingleton<ICacheManager, MemoryCacheManager>();
-           services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddSingleton<Stopwatch>();
+            services.AddMemoryCache(); //redis'e geçersek buna gerek kalmıyor
+            services.AddSingleton<ICacheManager, MemoryCacheManager>(); //redis'e geçersek MemoryCacheManager yerine RedisManager gelecek
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<Stopwatch>();
         }
     }
 }
